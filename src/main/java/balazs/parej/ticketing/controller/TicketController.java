@@ -50,37 +50,16 @@ public class TicketController {
      * GET /api/tickets
      */
     @GetMapping
-    public ResponseEntity<List<DTOs.TicketResponse>> getAllTickets(
-        @RequestParam(required = false) String assigneeId
-    ) {
-        List<Ticket> tickets;
-        
-        if (assigneeId != null) {
-            tickets = ticketService.getTicketsByAssignee(assigneeId);
-        } else {
-            tickets = ticketService.getAllTickets();
-        }
-        
+    public ResponseEntity<List<DTOs.TicketResponse>> getAllTickets() {
+        List<Ticket> tickets = ticketService.getAllTickets();
+
         List<DTOs.TicketResponse> response = tickets.stream()
             .map(this::toResponse)
             .toList();
         
         return ResponseEntity.ok(response);
     }
-    
-    /**
-     * Get unassigned tickets
-     * GET /api/tickets/unassigned
-     */
-    @GetMapping("/unassigned")
-    public ResponseEntity<List<DTOs.TicketResponse>> getUnassignedTickets() {
-        List<Ticket> tickets = ticketService.getUnassignedTickets();
-        List<DTOs.TicketResponse> response = tickets.stream()
-            .map(this::toResponse)
-            .toList();
-        return ResponseEntity.ok(response);
-    }
-    
+
     /**
      * Update ticket (simple fields like subject/description)
      * PATCH /api/tickets/{id}
@@ -110,17 +89,7 @@ public class TicketController {
         Ticket ticket = ticketService.assignTicket(id, request.assigneeId());
         return ResponseEntity.ok(toResponse(ticket));
     }
-    
-    /**
-     * Unassign ticket
-     * DELETE /api/tickets/{id}/assign
-     */
-    @DeleteMapping("/{id}/assign")
-    public ResponseEntity<DTOs.TicketResponse> unassignTicket(@PathVariable UUID id) {
-        Ticket ticket = ticketService.unassignTicket(id);
-        return ResponseEntity.ok(toResponse(ticket));
-    }
-    
+
     /**
      * Update ticket status
      * PATCH /api/tickets/{id}/status
@@ -133,7 +102,7 @@ public class TicketController {
         Ticket ticket = ticketService.updateStatus(id, request.status());
         return ResponseEntity.ok(toResponse(ticket));
     }
-    
+
     /**
      * Convert entity to DTO
      */
