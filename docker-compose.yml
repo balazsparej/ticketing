@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Redis - Distributed Lock Store
+  redis:
+    image: redis:7-alpine
+    container_name: ticketing-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - ticketing-network
+
+  # Spring Boot Application
+  ticketing-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ticketing-app
+    ports:
+      - "8080:8080"
+    environment:
+      # Redis connection - CRITICAL: Must match service name
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+
+      # JVM options
+      JAVA_OPTS: >-
+        -Xmx512m
+        -Xms256m
+        -XX:+UseG1GC
+        -XX:MaxGCPauseMillis=200
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ticketing-network
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+    driver: local
+
+networks:
+  ticketing-network:
+    driver: bridge

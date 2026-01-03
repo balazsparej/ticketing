@@ -1,0 +1,29 @@
+# Development version with only Redis
+# Use this when developing locally and running the app via IDE/Gradle
+
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: ticketing-redis-dev
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data-dev:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - ticketing-network-dev
+
+volumes:
+  redis-data-dev:
+    driver: local
+
+networks:
+  ticketing-network-dev:
+    driver: bridge

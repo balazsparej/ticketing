@@ -9,34 +9,34 @@ spring:
     username: sa
     password:
 
-  # H2 Console (for debugging)
+  # H2 Console disabled in Docker
   h2:
     console:
-      enabled: true
-      path: /h2-console
+      enabled: false
 
   # JPA/Hibernate
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
 
-  # Redis Configuration (can be overridden by environment variables)
+  # Redis Configuration (from environment variables)
   data:
     redis:
-      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      host: ${SPRING_DATA_REDIS_HOST:redis}
       port: ${SPRING_DATA_REDIS_PORT:6379}
       timeout: 3000ms
 
 # Server Configuration
 server:
   port: 8080
+  shutdown: graceful
 
-# Actuator endpoints
+# Actuator endpoints for health checks
 management:
   endpoints:
     web:
@@ -44,15 +44,17 @@ management:
         include: health,info,metrics
   endpoint:
     health:
-      show-details: always
+      show-details: when-authorized
   health:
     redis:
       enabled: true
 
-# Logging
+# Logging for Docker
 logging:
   level:
-    com.ticketing: DEBUG
-    org.springframework.orm: DEBUG
-    org.hibernate: INFO
-    org.redisson: INFO
+    root: INFO
+    com.ticketing: INFO
+    org.springframework: WARN
+    org.hibernate: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
