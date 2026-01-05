@@ -1,0 +1,125 @@
+{
+  "info": {
+    "name": "Ticketing API",
+    "description": "Postman collection for the Ticketing REST API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "ticketId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Create Ticket",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/tickets",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "tickets"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"subject\": \"Login issue\",\n  \"description\": \"User cannot log in\",\n  \"userId\": \"user-123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Get Ticket by ID",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/tickets/{{ticketId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "tickets", "{{ticketId}}"]
+        }
+      }
+    },
+    {
+      "name": "Get All Tickets",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/tickets",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "tickets"]
+        }
+      }
+    },
+    {
+      "name": "Update Ticket (Subject / Description)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/tickets/{{ticketId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "tickets", "{{ticketId}}"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"subject\": \"Updated subject\",\n  \"description\": \"Updated description\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Assign Ticket",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/tickets/{{ticketId}}/assign",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "tickets", "{{ticketId}}", "assign"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assigneeId\": \"agent-42\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Update Ticket Status",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/tickets/{{ticketId}}/status",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "tickets", "{{ticketId}}", "status"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+        }
+      }
+    }
+  ]
+}
